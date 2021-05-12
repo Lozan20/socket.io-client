@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+    stages {
+        stage('Budowanie') {
+            steps {
+                echo 'Trying to build project'
+                }
+        }
+        stage('Testowanie') {
+            steps {
+                echo 'Trying to test project'
+                }
+        }
+       
+    }
+    
+    post {
+        
+        success {
+            echo 'Sukces'
+            emailext attachLog: true,
+                body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+                recipientProviders: [developers(), requestor()],
+                to: 'lozanskimichal@gmail.com',
+                subject: "Jenkins Build Worked ${currentBuild.currentResult}: Job ${env.JOB_NAME}"
+                
+         
+        }
+        
+        failure {
+            echo 'Klęska'
+            emailext attachLog: true,
+                body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+                recipientProviders: [developers(), requestor()],
+                to: 'lozanskimichal@gmail.com',
+                subject: "Jenkins Build Failed${currentBuild.currentResult}: Job ${env.JOB_NAME}"
+                
+        }
+         }
+   
+}
